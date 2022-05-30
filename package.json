@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/AqualisDAO/aqualis-dao/issues"
   },
-  "homepage": "https://github.com/AqualisDAO/aqualis-dao#readme"
+  "homepage": "https://github.com/AqualisDAO/aqualis-dao#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0"
+  }
 }
