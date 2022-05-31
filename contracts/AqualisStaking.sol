@@ -5,10 +5,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
 
 contract AqualisStaking is Ownable, ReentrancyGuard{
+
+        using SafeMath for uint256;
         string public name;
         string public symbol;
         address treasury;
@@ -88,15 +91,16 @@ contract AqualisStaking is Ownable, ReentrancyGuard{
     }
 
 
-    function depositFor(address _for, uint256 _amount, bool _isFixed) external nonReentrant {
-
+    function depositFor(address _for, uint256 _amount, uint256 _lockTime, bool _isFixed) external nonReentrant {
+        require(_lockTime <= MAX_LOCK, "can lock for 1054weeks max");
+        require(_lockTime >= MIN_LOCK, "can lock for 5 weeks min");
         Stake memory _stake = Stake({ amount: stakes[_for].amount, end: stakes[_for].end, isFixed: stakes[_for].isFixed });
-
+        
         require(_amount > 0, "bad _amount");
         require(_stake.amount > 0, "!lock existed");
         require(_stake.end > block.timestamp, "lock expired. please withdraw");
-
-        _depositFor(_for, _amount, 0, _isFixed, _stake);
+        uint256 _unlockTime = block.timestamp + _lockTime;
+        _depositFor(_for, _amount, _unlockTime, _isFixed, _stake);
     }
 
 
